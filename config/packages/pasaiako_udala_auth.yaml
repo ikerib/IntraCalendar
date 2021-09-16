@@ -1,0 +1,3 @@
+pasaiako_udala_auth:
+    route_after_successfull_login: "default"
+    LDAP_ADMIN_TALDEAK: "ROL-Antolakuntza_Informatika"

@@ -19,7 +19,6 @@ class ScheduleCrudController extends AbstractCrudController
         return Schedule::class;
     }
 
-
     public function configureFields(string $pageName): iterable
     {
         return [

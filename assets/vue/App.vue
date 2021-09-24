@@ -1,5 +1,4 @@
-<!--https://codesandbox.io/s/github/chnirt/custom-tui-calendar/tree/master/?file=/src/components/CustomTuiCalendar.js-->
-<!--https://codesandbox.io/s/musing-chatelet-iry3t-->
+
 <template>
 <div class="row">
   <div class="col-6">
@@ -238,6 +237,7 @@ export default {
       month: {
         startDayOfWeek: 1,
         daynames: ['Iga','Ast','Atr','Atz','Ost','Osr','Lar'],
+        workweek: true
       },
       week: {
         daynames: ['Iga','Ast','Atr','Atz','Ost','Osr','Lar'],
@@ -246,6 +246,7 @@ export default {
         timezonesCollapsed: true,
         hourStart: 6,
         hourEnd: 16,
+        workweek: true
       },
       taskView: false,
       scheduleView: false,
@@ -328,11 +329,11 @@ export default {
       this.filterCalendar(cloneCheckedCalendars);
     },
     onClickSchedule(res) {
-      // console.group('onClickSchedule');
-      // console.log('MouseEvent : ', res.event);
-      // console.log('Calendar Info : ', res.calendar);
-      // console.log('Schedule Info : ', res.schedule);
-      // console.groupEnd();
+      console.group('onClickSchedule');
+      console.log('MouseEvent : ', res.event);
+      console.log('Calendar Info : ', res.calendar);
+      console.log('Schedule Info : ', res.schedule);
+      console.groupEnd();
     },
     onClickDayname(res) {
       // view : week, day

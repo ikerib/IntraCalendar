@@ -65,8 +65,9 @@ class Schedule
 
     /**
      * @ORM\Column(type="text", nullable=true)
+     * @Groups({"calendar:read"})
      */
-    private $Description;
+    private $body;
 
     public function __construct()
     {
@@ -162,15 +163,17 @@ class Schedule
         return $this;
     }
 
-    public function getDescription(): ?string
+    public function getBody(): ?string
     {
-        return $this->Description;
+        return $this->body;
     }
 
-    public function setDescription(?string $Description): self
+    public function setBody(?string $body): self
     {
-        $this->Description = $Description;
+        $this->body = $body;
 
         return $this;
     }
+
+    
 }

@@ -12,7 +12,7 @@ require('bootstrap');
 // require('bootstrap/js/dist/popover');
 
 $(document).ready(function() {
-    console.log("Kaixo");
+
 });
 
 

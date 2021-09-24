@@ -2,7 +2,7 @@
 <!--https://codesandbox.io/s/musing-chatelet-iry3t-->
 <template>
 <div class="row">
-  <div class="col-12">
+  <div class="col-6">
     <select v-model="selectedView">
       <option v-for="(options, index) in viewModeOptions" :value="options.value" :key="index">
         {{options.title}}
@@ -15,24 +15,29 @@
     </span>
     <span class="render-range">{{dateRange}}</span>
   </div>
-  <div class="row">
-    <div class="col-2">
+
+<!--  <div class="row">-->
+    <div class="col-6">
       <div id="calendarList" class="lnb-calendars-d1">
-        <div v-for="(cal, index) in checkedCalendars" :key="index" class="lnb-calendars-item">
-          <label>
-            <input type="checkbox"
-                   :id="cal.id"
-                   class="tui-full-calendar-checkbox-round"
-                   v-model="cal.isChecked"
-                   @change="onChangeCalendar($event)"
-            />
-            <span :style="{ borderColor: cal.bgColor, backgroundColor: cal.isChecked ? cal.bgColor : 'transparent' }" />
-            <span>{{cal.name}}</span>
-          </label>
-        </div>
+        <ul class="list-inline">
+          <li class="list-inline-item lnb-calendars-item" v-for="(cal, index) in checkedCalendars" :key="index">
+            <label>
+              <input type="checkbox"
+                     :id="cal.id"
+                     class="tui-full-calendar-checkbox-round"
+                     v-model="cal.isChecked"
+                     @change="onChangeCalendar($event)"
+              />
+              <span :style="{ borderColor: cal.bgColor, backgroundColor: cal.isChecked ? cal.bgColor : 'transparent' }" />
+              <span>{{cal.name}}</span>
+            </label>
+          </li>
+        </ul>
       </div>
     </div>
-    <div class="col-10">
+<!--  </div>-->
+  <div class="row">
+    <div class="col-12">
       <calendar style="height: 800px"
                 ref="tuiCal"
                 :useDetailPopup="useDetailPopup"
@@ -240,13 +245,12 @@ export default {
         showTimezoneCollapseButton: true,
         timezonesCollapsed: true,
         hourStart: 6,
-        hourEnd: 23,
+        hourEnd: 16,
       },
       taskView: false,
       scheduleView: false,
       useDetailPopup: true,
       disableDblClick: true,
-
       isReadOnly: true
     };
   },

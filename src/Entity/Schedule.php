@@ -63,6 +63,11 @@ class Schedule
      */
     private $calendar;
 
+    /**
+     * @ORM\Column(type="text", nullable=true)
+     */
+    private $Description;
+
     public function __construct()
     {
         $this->calendar = new ArrayCollection();
@@ -153,6 +158,18 @@ class Schedule
     public function removeCalendar(Calendar $calendar): self
     {
         $this->calendar->removeElement($calendar);
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->Description;
+    }
+
+    public function setDescription(?string $Description): self
+    {
+        $this->Description = $Description;
 
         return $this;
     }

@@ -24,7 +24,7 @@ class ScheduleCrudController extends AbstractCrudController
         return [
             IdField::new('id')->hideOnForm(),
             TextField::new('title','Izenburua'),
-            TextEditorField::new('description'),
+            TextEditorField::new('body'),
             TextField::new('category', 'Mota'),
             DateTimeField::new('start', 'Hasi')->setFormat('Y-MM-dd HH:mm')->renderAsNativeWidget(),
             DateTimeField::new('end', 'Amaitu')->setFormat('Y-MM-dd HH:mm')->renderAsNativeWidget(),

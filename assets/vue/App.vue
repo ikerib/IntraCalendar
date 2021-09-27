@@ -382,18 +382,10 @@ export default {
         return element;
       })
       // convert
-      console.log("--------------------------------------------------------------------------------------------");
-      console.log(dataOri[4]);
-
-      console.log("mmmmmmmmmmm");
-      console.log(moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
-
       dataOri.forEach(element => {
         element.start = moment(element.start, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
         element.end = moment(element.end, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
       });
-      console.log(dataOri[4]);
-      console.log("--------------------------------------------------------------------------------------------");
       self.scheduleList = response.data;
       // self.filterSchedules = response.data;
       self.filterSchedules = dataOri;

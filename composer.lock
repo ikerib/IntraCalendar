@@ -8384,16 +8384,16 @@
         },
         {
             "name": "zenstruck/foundry",
-            "version": "v1.13.2",
+            "version": "v1.13.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/zenstruck/foundry.git",
-                "reference": "06b24d44fb76c0ab32f055ffb8a964de3a44925d"
+                "reference": "477db0a2889fa3d72e9b6ca76a6a63c2be26b611"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/06b24d44fb76c0ab32f055ffb8a964de3a44925d",
-                "reference": "06b24d44fb76c0ab32f055ffb8a964de3a44925d",
+                "url": "https://api.github.com/repos/zenstruck/foundry/zipball/477db0a2889fa3d72e9b6ca76a6a63c2be26b611",
+                "reference": "477db0a2889fa3d72e9b6ca76a6a63c2be26b611",
                 "shasum": ""
             },
             "require": {
@@ -8411,11 +8411,9 @@
                 "doctrine/doctrine-migrations-bundle": "^2.2|^3.0",
                 "doctrine/orm": "^2.7",
                 "matthiasnoback/symfony-dependency-injection-test": "^4.1",
-                "psalm/plugin-symfony": "^1.5|^2.0",
                 "symfony/framework-bundle": "^4.4|^5.0",
                 "symfony/maker-bundle": "^1.30",
-                "symfony/phpunit-bridge": "^5.2",
-                "vimeo/psalm": "^3.18|^4.0"
+                "symfony/phpunit-bridge": "^5.3"
             },
             "type": "library",
             "extra": {
@@ -8456,7 +8454,7 @@
             ],
             "support": {
                 "issues": "https://github.com/zenstruck/foundry/issues",
-                "source": "https://github.com/zenstruck/foundry/tree/v1.13.2"
+                "source": "https://github.com/zenstruck/foundry/tree/v1.13.3"
             },
             "funding": [
                 {
@@ -8464,7 +8462,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-09-03T14:29:26+00:00"
+            "time": "2021-09-16T18:36:26+00:00"
         }
     ],
     "aliases": [],

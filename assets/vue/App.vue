@@ -45,11 +45,11 @@
                 :schedules="scheduleList"
                 :theme="theme"
                 :template="template"
+                :timezones="timezones"
                 :taskView="false"
                 :scheduleView="true"
                 :month="month"
                 :week="week"
-                :timezones="timezones"
                 :disableDblClick="disableDblClick"
                 :isReadOnly="isReadOnly"
                 @clickSchedule="onClickSchedule"
@@ -115,22 +115,19 @@ export default {
       selectedView: 'week',
       calendarList: [],
       scheduleList: [],
-      timezones: [],
+      timezones: [
+        // {
+        //   zones: [
+            {
+              timezoneName: 'Europe/Madrid',
+              timezoneOffset: 0,
+              displayLabel: '',
+              tooltip: 'Madrid'
+            }
+          // ]
+        // }
+      ],
       theme: myTheme,
-      // template: {
-      //   milestone(schedule) {
-      //     return `<span style="color:#fff;background-color: ${schedule.bgColor};">${schedule.title}</span>`;
-      //   },
-      //   milestoneTitle() {
-      //     return 'Milestone';
-      //   },
-      //   allday(schedule) {
-      //     return `${schedule.title}<i class="fa fa-refresh"></i>`;
-      //   },
-      //   alldayTitle() {
-      //     return 'Egun osoa';
-      //   }
-      // },
       template: {
         alldayTitle: function () {
           return '<span class="tui-full-calendar-left-content">ALL DAY</span>';
@@ -150,7 +147,7 @@ export default {
           );
         },
         monthMoreTitleDate: function (date, dayname) {
-          var day = date.split(".")[2];
+          let day = date.split(".")[2];
 
           return (
               '<span class="tui-full-calendar-month-more-title-day">' +
@@ -164,8 +161,8 @@ export default {
           return '<span class="tui-full-calendar-icon tui-full-calendar-ic-close"></span>';
         },
         monthGridHeader: function (dayModel) {
-          var date = parseInt(dayModel.date.split("-")[2], 10);
-          var classNames = ["tui-full-calendar-weekday-grid-date "];
+          let date = parseInt(dayModel.date.split("-")[2], 10);
+          let classNames = ["tui-full-calendar-weekday-grid-date "];
 
           if (dayModel.isToday) {
             classNames.push("tui-full-calendar-weekday-grid-date-decorator");
@@ -204,7 +201,7 @@ export default {
           return "+" + hiddenSchedules;
         },
         dayGridTitle: function (viewName) {
-          var title = "";
+          let title = "";
           switch (viewName) {
             case "milestone":
               title =
@@ -226,7 +223,7 @@ export default {
         },
         timegridDisplayPrimayTime: function(time) {
           /* will be deprecated. use 'timegridDisplayPrimaryTime' */
-          var hour = time.hour;
+          let hour = time.hour;
           return hour + ':00';
         },
         collapseBtnTitle: function () {
@@ -380,13 +377,26 @@ export default {
     });
     axios.get('/api/schedules.json').then(function (response) {
       let dataOri = response.data;
-      let datades = [];
       dataOri.forEach(element => {
         element.calendarId = element.calendar[0].id;
         return element;
       })
+      // convert
+      console.log("--------------------------------------------------------------------------------------------");
+      console.log(dataOri[4]);
+
+      console.log("mmmmmmmmmmm");
+      console.log(moment(new Date()).format("YYYY-MM-DD HH:mm:ss"));
+
+      dataOri.forEach(element => {
+        element.start = moment(element.start, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+        element.end = moment(element.end, "YYYY-MM-DDTHH:mm:ss").format("YYYY-MM-DD HH:mm:ss");
+      });
+      console.log(dataOri[4]);
+      console.log("--------------------------------------------------------------------------------------------");
       self.scheduleList = response.data;
-      self.filterSchedules = response.data;
+      // self.filterSchedules = response.data;
+      self.filterSchedules = dataOri;
     });
   }
 };

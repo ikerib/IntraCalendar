@@ -52,6 +52,10 @@ RUN pecl install -o -f redis \
 &&  rm -rf /tmp/pear \
 &&  docker-php-ext-enable redis
 
+#> timezone
+RUN apk add tzdata && cp /usr/share/zoneinfo/Europe/Madrid /etc/localtime && echo "Europe/Madrid" >  /etc/timezone
+#< timezone
+
 # Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 RUN rm -rf /var/cache/apk/*

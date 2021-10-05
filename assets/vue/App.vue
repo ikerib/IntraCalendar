@@ -242,7 +242,7 @@ export default {
         showTimezoneCollapseButton: true,
         timezonesCollapsed: true,
         hourStart: 6,
-        hourEnd: 16,
+        hourEnd: 23,
         workweek: true
       },
       taskView: false,

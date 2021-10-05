@@ -112,7 +112,7 @@ export default {
         }
       ],
       dateRange: '',
-      selectedView: 'week',
+      selectedView: 'month',
       calendarList: [],
       scheduleList: [],
       timezones: [

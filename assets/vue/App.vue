@@ -332,7 +332,11 @@ export default {
       console.log('Schedule Info : ', res.schedule);
       console.groupEnd();
       const matches = document.querySelectorAll('pre > a');
+      const matches2 = document.querySelectorAll('div > a');
       matches.forEach(element => {
+        return element.target = "_blank";
+      });
+      matches2.forEach(element => {
         return element.target = "_blank";
       })
     },

@@ -331,6 +331,10 @@ export default {
       console.log('Calendar Info : ', res.calendar);
       console.log('Schedule Info : ', res.schedule);
       console.groupEnd();
+      const matches = document.querySelectorAll('pre > a');
+      matches.forEach(element => {
+        return element.target = "_blank";
+      })
     },
     onClickDayname(res) {
       // view : week, day

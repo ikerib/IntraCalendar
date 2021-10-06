@@ -13,7 +13,12 @@ require("bootstrap-datepicker/dist/locales/bootstrap-datepicker.eu.min");
 // require('bootstrap/js/dist/popover');
 
 $(document).ready(function() {
-    $('a[href^="http"]').attr('target','_blank');
+   // $('a[href^="http"]').attr('target','_blank');
+
+    //$('a').setAttribute('target','_blank');
+    $('a').on('click', function (e){
+        e.preventDefault();
+    })
     console.log("kak");
 });
 

@@ -15,4 +15,12 @@ class DefaultController extends AbstractController
     {
         return $this->render('default/index.html.twig');
     }
+
+    /**
+     * @Route("/txikia", name="default")
+     */
+    public function txikia(): Response
+    {
+        return $this->render('default/txikia.html.twig');
+    }
 }

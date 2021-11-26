@@ -2,7 +2,9 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiFilter;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\DateFilter;
 use App\Repository\ScheduleRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -16,6 +18,12 @@ use Doctrine\ORM\Mapping as ORM;
  *      itemOperations={"get"},
  *      normalizationContext={"groups"={"calendar:read"}, "swagger_definition_name"="Read"}
  *
+ * )
+ * @ApiFilter(
+ *     DateFilter::class,
+ *     properties={
+ *      "start", "end"
+ *     }
  * )
  */
 class Schedule
@@ -175,5 +183,5 @@ class Schedule
         return $this;
     }
 
-    
+
 }

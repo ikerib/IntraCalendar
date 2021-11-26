@@ -12,8 +12,11 @@
         "sass-loader": "^12.0.0",
         "stimulus": "^2.0.0",
         "vue": "^2.5",
+        "vue-axios": "^3.4.0",
         "vue-loader": "^15.9.5",
+        "vue-luxon": "^0.10.0",
         "vue-template-compiler": "^2.6.14",
+        "vuejs-datepicker": "^1.6.2",
         "webpack-notifier": "^1.6.0"
     },
     "license": "UNLICENSED",

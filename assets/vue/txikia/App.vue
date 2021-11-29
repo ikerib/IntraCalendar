@@ -132,5 +132,7 @@ export default {
 </script>
 
 <style scoped>
-.kk{}
+.row {
+  --bs-gutter-x: -4.5rem !important;
+}
 </style>

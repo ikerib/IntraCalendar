@@ -2,9 +2,10 @@
   <div class="row">
     <div class="col-12 text-center">
       <datepicker
-          :language="es"
+          :language="eu"
           :inline="true"
           :highlighted="highlighted"
+          :monday-first=true
           @selected="daySelectHandler">
           v-model="selectedDate"
       </datepicker>
@@ -35,12 +36,15 @@
 import Datepicker from 'vuejs-datepicker';
 import {en, es} from 'vuejs-datepicker/dist/locale/'
 
+import eu from './eu.js'
+
 export default {
   name: "App",
   data () {
     return {
       en: en,
       es: es,
+      eu: eu,
       selected: [],
       selectedDate:null,
       highlighted: {

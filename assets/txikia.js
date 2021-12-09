@@ -31,12 +31,9 @@ Vue.use(VueAxios, axios)
 Vue.directive('links-in-new-window', {
     inserted: function(el) {
         const anchors = el.querySelectorAll('a')
-
         anchors.forEach((anchor) => anchor.target = "_blank")
     }
-
 })
-
 
 import VueLuxon from "vue-luxon";
 Vue.use(VueLuxon, {
@@ -48,7 +45,6 @@ Vue.use(VueLuxon, {
         zone: "local",
         format: "YYYY-MM-DD HH:mm:ss",
         locale: "eu",
-
     }
 });
 

@@ -47,6 +47,7 @@ export default {
       eu: eu,
       selected: [],
       selectedDate:null,
+      schedules: [],
       highlighted: {
           // to: new Date(2016, 0, 5), // Highlight all dates up to specific date
           // from: new Date(2016, 0, 26), // Highlight all dates after specific date
@@ -78,6 +79,7 @@ export default {
   mounted() {
     this.axios.get('/api/schedules.json').then((response) => {
       let dates=[]
+      this.schedules = response.data;
       response.data.forEach(function(item) {
           dates.push(
               new Date(item.start)
@@ -90,37 +92,56 @@ export default {
     daySelectHandler(val) {
       const fetxa = new Date(val);
       const strStart = fetxa.getUTCFullYear()
-          + "-"
-          + ('0' + (fetxa.getMonth()+1)).slice(-2)
-          + "-"
-          + ('0' + fetxa.getDate()).slice(-2);
-
-      fetxa.setDate(fetxa.getDate() + 1);
-
-      const strEnd = fetxa.getUTCFullYear()
-          + "-"
-          + ('0' + (fetxa.getMonth()+1)).slice(-2)
-          + "-"
-          + ('0' + (fetxa.getUTCDate())).slice(-2);
-      const url = routing.generate('api_schedules_get_collection', {
-        "start[after]": strStart,
-        "end[before]": strEnd,
-      });
-
-      this.axios.get(url).then((response) => {
-        let selected = [];
-        response.data.forEach(function(item) {
-          const resp = {
-            title: item.title,
-            start: item.start,
-            end: item.end,
-            body: item.body
-          }
-          selected.push(resp);
-        });
-        this.selected = selected;
+            + "-"
+            + ('0' + (fetxa.getMonth()+1)).slice(-2)
+            + "-"
+            + ('0' + fetxa.getDate()).slice(-2);
+      this.schedules.map(s => {
+        const i = new Date(s.start);
+        const f =   i.getUTCFullYear()
+            + "-"
+            + ('0' + (i.getMonth()+1)).slice(-2)
+            + "-"
+            + ('0' + i.getDate()).slice(-2);
+        if (strStart === f) {
+          this.selected.push(s);
+        }
       })
     },
+    // daySelectHandler(val) {
+    //   const fetxa = new Date(val);
+    //   const strStart = fetxa.getUTCFullYear()
+    //       + "-"
+    //       + ('0' + (fetxa.getMonth()+1)).slice(-2)
+    //       + "-"
+    //       + ('0' + fetxa.getDate()).slice(-2);
+    //
+    //   fetxa.setDate(fetxa.getDate() + 1);
+    //
+    //   const strEnd = fetxa.getUTCFullYear()
+    //       + "-"
+    //       + ('0' + (fetxa.getMonth()+1)).slice(-2)
+    //       + "-"
+    //       + ('0' + (fetxa.getUTCDate())).slice(-2);
+    //   const url = routing.generate('api_schedules_get_collection', {
+    //     "start[after]": strStart,
+    //     "end[before]": strEnd,
+    //   });
+    //
+    //   this.axios.get(url).then((response) => {
+    //     let selected = [];
+    //     response.data.forEach(function(item) {
+    //       const resp = {
+    //         title: item.title,
+    //         start: item.start,
+    //         end: item.end,
+    //         body: item.body
+    //       }
+    //       selected.push(resp);
+    //     });
+    //     this.selected = selected;
+    //   })
+    // },
   }
 }
 </script>

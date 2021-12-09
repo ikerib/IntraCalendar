@@ -1,6 +1,6 @@
 <template>
   <div class="row">
-    <div class="col-12 text-center">
+    <div class="col-6">
       <datepicker
           :language="eu"
           :inline="true"
@@ -10,21 +10,29 @@
           v-model="selectedDate"
       </datepicker>
     </div>
+    <div class="col-5">
+      <ul>
+        <li>1111111</li>
+        <li>1111111</li>
+        <li>1111111</li>
+        <li>1111111</li>
+      </ul>
+    </div>
 
     <div class="col-12" v-for="(item, index) in selected">
       <div class="card" style="width: 18rem;">
         <div class="card-body">
-          <h5 class="card-title">{{ item.title }}</h5>
+          <h5 class="card-title">{{ item.start | luxon('HH:mm') }} - {{ item.title }}</h5>
 
           <p class="card-text" v-html="item.body" v-links-in-new-window></p>
 
         </div>
-        <div class="card-footer">
-          <ul class="list-inline">
-            <li class="list-inline-item">Hasi:&nbsp;&nbsp;{{ item.start | luxon('yyyy-MM-dd HH:mm:ss') }}</li>
-            <li class="list-inline-item">Amaitu:&nbsp;&nbsp;{{ item.end | luxon('yyyy-MM-dd HH:mm:ss') }}</li>
-          </ul>
-        </div>
+<!--        <div class="card-footer">-->
+<!--          <ul class="list-inline">-->
+<!--            <li class="list-inline-item">Hasi:&nbsp;&nbsp;{{ item.start | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
+<!--            <li class="list-inline-item">Amaitu:&nbsp;&nbsp;{{ item.end | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
+<!--          </ul>-->
+<!--        </div>-->
       </div>
     </div>
 
@@ -37,6 +45,10 @@ import Datepicker from 'vuejs-datepicker';
 import {en, es} from 'vuejs-datepicker/dist/locale/'
 
 import eu from './eu.js'
+
+function date2format(fetxa) {
+  return fetxa.getUTCFullYear() + "-" + ('0' + (fetxa.getMonth()+1)).slice(-2) + "-" + ('0' + fetxa.getDate()).slice(-2);
+}
 
 export default {
   name: "App",
@@ -77,71 +89,112 @@ export default {
     Datepicker
   },
   mounted() {
+
+    function isInState(fetxa, dates) {
+      const strFetxa = date2format(fetxa); // 2021-12-30
+      let resp = false;
+
+      dates.forEach(function (d) {
+        const current = date2format(d);
+        console.log("current => " + current )
+        console.log("strFetxa => " + strFetxa )
+        if ( current === strFetxa) {
+          resp = true;
+        }
+      });
+
+      return resp;
+    }
+
     this.axios.get('/api/schedules.json').then((response) => {
       let dates=[]
       this.schedules = response.data;
       response.data.forEach(function(item) {
-          dates.push(
-              new Date(item.start)
-          )
+        const dStart = new Date(item.start);
+        const strStart = date2format(dStart);
+        const dEnd = new Date(item.end);
+        const strEnd = date2format(dEnd);
+        if (strStart === strEnd) {
+          // dates.push(new Date(item.start))
+          dates.indexOf(new Date(item.start)) === -1 ? dates.push(new Date(item.start)) : console.log("This item already exists");
+        } else {
+          let index = -1;
+          for (let hasi=new Date(item.start); hasi <= dEnd; hasi.setDate(hasi.getDate() + 1)) {
+            index++;
+            // console.log(hasi);
+            let dcopy = new Date(hasi);
+            let dcopy1 = new Date(item.start);
+            // dcopy.setDate(dcopy.getDate() + index + 1)
+            const dago = isInState(dcopy, dates);
+
+            console.log(dcopy)
+            console.log(dcopy1)
+
+
+            if ( !dago ) {
+              dates.push(dcopy);
+            }
+          }
+        }
+
       });
+
       this.highlighted.dates = dates;
     })
   },
   methods: {
-    daySelectHandler(val) {
-      const fetxa = new Date(val);
-      const strStart = fetxa.getUTCFullYear()
-            + "-"
-            + ('0' + (fetxa.getMonth()+1)).slice(-2)
-            + "-"
-            + ('0' + fetxa.getDate()).slice(-2);
-      this.schedules.map(s => {
-        const i = new Date(s.start);
-        const f =   i.getUTCFullYear()
-            + "-"
-            + ('0' + (i.getMonth()+1)).slice(-2)
-            + "-"
-            + ('0' + i.getDate()).slice(-2);
-        if (strStart === f) {
-          this.selected.push(s);
-        }
-      })
-    },
+
     // daySelectHandler(val) {
+    //   let kk = date2format(val);
+    //   this.selected = [];
     //   const fetxa = new Date(val);
-    //   const strStart = fetxa.getUTCFullYear()
-    //       + "-"
-    //       + ('0' + (fetxa.getMonth()+1)).slice(-2)
-    //       + "-"
-    //       + ('0' + fetxa.getDate()).slice(-2);
-    //
-    //   fetxa.setDate(fetxa.getDate() + 1);
-    //
-    //   const strEnd = fetxa.getUTCFullYear()
-    //       + "-"
-    //       + ('0' + (fetxa.getMonth()+1)).slice(-2)
-    //       + "-"
-    //       + ('0' + (fetxa.getUTCDate())).slice(-2);
-    //   const url = routing.generate('api_schedules_get_collection', {
-    //     "start[after]": strStart,
-    //     "end[before]": strEnd,
-    //   });
-    //
-    //   this.axios.get(url).then((response) => {
-    //     let selected = [];
-    //     response.data.forEach(function(item) {
-    //       const resp = {
-    //         title: item.title,
-    //         start: item.start,
-    //         end: item.end,
-    //         body: item.body
-    //       }
-    //       selected.push(resp);
-    //     });
-    //     this.selected = selected;
+    //   const strStart = date2format(fetxa);
+    //   console.log(strStart);
+    //   this.schedules.map(s => {
+    //     const i = new Date(s.start);
+    //     const f = date2format(i);
+    //     console.log("-------------")
+    //     console.log(strStart);
+    //     console.log(f);
+    //     console.log("-------------")
+    //     if (strStart === f) {
+    //       this.selected.push(s);
+    //     }
     //   })
     // },
+    daySelectHandler(val) {
+      const fetxa = new Date(val);
+      const strStart = date2format(fetxa);
+
+      //fetxa.setDate(fetxa.getDate() + 1);
+      //fetxa.setDate(fetxa.getDate() + 1);
+
+      const strEnd = date2format(fetxa);
+
+      const url = routing.generate('api_schedules_get_collection', {
+        "start[before]": strStart,
+        "end[after]": strEnd,
+      });
+
+      console.log(url);
+
+      this.axios.get(url).then((response) => {
+        console.log("RESPONSE");
+        console.log(response);
+        console.log(response.data);
+        let selected = [];
+        response.data.forEach(function(item) {
+          const resp = {
+            title: item.title,
+            start: item.start,
+            end: item.end,
+            body: item.body
+          }
+          selected.push(resp);
+        });
+        this.selected = selected;
+      })
+    },
   }
 }
 </script>

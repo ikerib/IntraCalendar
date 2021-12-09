@@ -16,7 +16,7 @@
         <div class="card-body">
           <h5 class="card-title">{{ item.title }}</h5>
 
-          <p class="card-text" v-html="item.body"></p>
+          <p class="card-text" v-html="item.body" v-links-in-new-window></p>
 
         </div>
         <div class="card-footer">
@@ -89,7 +89,6 @@ export default {
   methods: {
     daySelectHandler(val) {
       const fetxa = new Date(val);
-      console.log(fetxa);
       const strStart = fetxa.getUTCFullYear()
           + "-"
           + ('0' + (fetxa.getMonth()+1)).slice(-2)
@@ -103,19 +102,14 @@ export default {
           + ('0' + (fetxa.getMonth()+1)).slice(-2)
           + "-"
           + ('0' + (fetxa.getUTCDate())).slice(-2);
-      console.log(strStart);
-      console.log(strEnd);
       const url = routing.generate('api_schedules_get_collection', {
         "start[after]": strStart,
         "end[before]": strEnd,
       });
-      console.log(url);
 
       this.axios.get(url).then((response) => {
-        console.log(response.data)
         let selected = [];
         response.data.forEach(function(item) {
-          console.log(item);
           const resp = {
             title: item.title,
             start: item.start,
@@ -132,7 +126,5 @@ export default {
 </script>
 
 <style scoped>
-.row {
-  --bs-gutter-x: -4.5rem !important;
-}
+
 </style>

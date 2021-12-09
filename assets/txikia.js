@@ -10,7 +10,6 @@ require('bootstrap-datepicker')
 require("bootstrap-datepicker/dist/locales/bootstrap-datepicker.eu.min");
 
 const routes = require('../public/js/fos_js_routes.json');
-console.log(routes);
 import Routing from '../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
 
 Routing.setRoutingData(routes);
@@ -28,6 +27,16 @@ axios.defaults.headers.post['Content-Type'] = 'application/json';
 axios.defaults.headers.delete['Content-Type'] = 'application/json';
 Vue.prototype.$http = axios;
 Vue.use(VueAxios, axios)
+
+Vue.directive('links-in-new-window', {
+    inserted: function(el) {
+        const anchors = el.querySelectorAll('a')
+
+        anchors.forEach((anchor) => anchor.target = "_blank")
+    }
+
+})
+
 
 import VueLuxon from "vue-luxon";
 Vue.use(VueLuxon, {

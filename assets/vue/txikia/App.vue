@@ -11,11 +11,10 @@
       </datepicker>
     </div>
     <div class="col-5">
-      <ul>
-        <li>1111111</li>
-        <li>1111111</li>
-        <li>1111111</li>
-        <li>1111111</li>
+      <ul class="list-unstyled">
+        <li v-for="calendar in calendars" :key="calendar.id">
+          <input type="checkbox"  v-on:change="filterCalendar(calendar.id)">{{calendar.name}}
+        </li>
       </ul>
     </div>
 
@@ -45,11 +44,27 @@ import Datepicker from 'vuejs-datepicker';
 import {en, es} from 'vuejs-datepicker/dist/locale/'
 
 import eu from './eu.js'
+const routes = require('../../../public/js/fos_js_routes.json');
+import Routing from '../../../vendor/friendsofsymfony/jsrouting-bundle/Resources/public/js/router.min.js';
 
+Routing.setRoutingData(routes);
+window.routing = Routing
 function date2format(fetxa) {
   return fetxa.getUTCFullYear() + "-" + ('0' + (fetxa.getMonth()+1)).slice(-2) + "-" + ('0' + fetxa.getDate()).slice(-2);
 }
+function isInState(fetxa, dates) {
+  const strFetxa = date2format(fetxa); // 2021-12-30
+  let resp = false;
 
+  dates.forEach(function (d) {
+    const current = date2format(d);
+    if ( current === strFetxa) {
+      resp = true;
+    }
+  });
+
+  return resp;
+}
 export default {
   name: "App",
   data () {
@@ -57,31 +72,16 @@ export default {
       en: en,
       es: es,
       eu: eu,
+      isFirstFilter: false,
+      calendars: [],
       selected: [],
       selectedDate:null,
       schedules: [],
       highlighted: {
-          // to: new Date(2016, 0, 5), // Highlight all dates up to specific date
-          // from: new Date(2016, 0, 26), // Highlight all dates after specific date
-          // days: [6, 0], // Highlight Saturday's and Sunday's
-          // daysOfMonth: [15, 20, 31], // Highlight 15th, 20th and 31st of each month
-          dates: [ // Highlight an array of dates
-            // new Date(2021, 11, 16),
-            // new Date(2021, 11, 17),
-            // new Date(2021, 11, 18)
-          ],
-          // a custom function that returns true of the date is highlighted
-          // this can be used for wiring you own logic to highlight a date if none
-          // of the above conditions serve your purpose
-          // this function should accept a date and return true if is highlighted
+          dates: [],
           customPredictor: function(date) {
-            // highlights the date if it is a multiple of 4
-            // if(date.getDate() % 4 == 0){
-            //   return true
-            // }
           },
-          includeDisabled: true // Highlight disabled dates
-
+          includeDisabled: true
       }
     }
   },
@@ -89,23 +89,6 @@ export default {
     Datepicker
   },
   mounted() {
-
-    function isInState(fetxa, dates) {
-      const strFetxa = date2format(fetxa); // 2021-12-30
-      let resp = false;
-
-      dates.forEach(function (d) {
-        const current = date2format(d);
-        console.log("current => " + current )
-        console.log("strFetxa => " + strFetxa )
-        if ( current === strFetxa) {
-          resp = true;
-        }
-      });
-
-      return resp;
-    }
-
     this.axios.get('/api/schedules.json').then((response) => {
       let dates=[]
       this.schedules = response.data;
@@ -121,67 +104,69 @@ export default {
           let index = -1;
           for (let hasi=new Date(item.start); hasi <= dEnd; hasi.setDate(hasi.getDate() + 1)) {
             index++;
-            // console.log(hasi);
             let dcopy = new Date(hasi);
             let dcopy1 = new Date(item.start);
             // dcopy.setDate(dcopy.getDate() + index + 1)
             const dago = isInState(dcopy, dates);
-
-            console.log(dcopy)
-            console.log(dcopy1)
-
-
             if ( !dago ) {
               dates.push(dcopy);
             }
           }
         }
-
       });
-
       this.highlighted.dates = dates;
+    })
+    this.axios.get('/api/calendars.json').then((response) => {
+      this.calendars = response.data;
     })
   },
   methods: {
+    filterCalendar(calendarid) {
+      if (!this.isFirstFilter) {
+        this.highlighted.dates = [];
+        this.isFirstFilter = true;
+      }
+      const calendarIRI = "/api/calendars/" + calendarid;
+      const url3 = Routing.generate('api_schedules_get_collection', {"calendar":  calendarIRI }, false);
 
-    // daySelectHandler(val) {
-    //   let kk = date2format(val);
-    //   this.selected = [];
-    //   const fetxa = new Date(val);
-    //   const strStart = date2format(fetxa);
-    //   console.log(strStart);
-    //   this.schedules.map(s => {
-    //     const i = new Date(s.start);
-    //     const f = date2format(i);
-    //     console.log("-------------")
-    //     console.log(strStart);
-    //     console.log(f);
-    //     console.log("-------------")
-    //     if (strStart === f) {
-    //       this.selected.push(s);
-    //     }
-    //   })
-    // },
+      this.axios.get(url3).then((response) => {
+        let dates=[]
+        this.schedules = response.data;
+        response.data.forEach(function(item) {
+          const dStart = new Date(item.start);
+          const strStart = date2format(dStart);
+          const dEnd = new Date(item.end);
+          const strEnd = date2format(dEnd);
+          if (strStart === strEnd) {
+            // dates.push(new Date(item.start))
+            dates.indexOf(new Date(item.start)) === -1 ? dates.push(new Date(item.start)) : console.log("This item already exists");
+          } else {
+            let index = -1;
+            for (let hasi=new Date(item.start); hasi <= dEnd; hasi.setDate(hasi.getDate() + 1)) {
+              index++;
+              let dcopy = new Date(hasi);
+              let dcopy1 = new Date(item.start);
+              // dcopy.setDate(dcopy.getDate() + index + 1)
+              const dago = isInState(dcopy, dates);
+              if ( !dago ) {
+                dates.push(dcopy);
+              }
+            }
+          }
+        });
+        console.log(dates)
+        this.highlighted.dates.push (...dates);
+      })
+    },
     daySelectHandler(val) {
       const fetxa = new Date(val);
       const strStart = date2format(fetxa);
-
-      //fetxa.setDate(fetxa.getDate() + 1);
-      //fetxa.setDate(fetxa.getDate() + 1);
-
       const strEnd = date2format(fetxa);
-
       const url = routing.generate('api_schedules_get_collection', {
         "start[before]": strStart,
         "end[after]": strEnd,
       });
-
-      console.log(url);
-
       this.axios.get(url).then((response) => {
-        console.log("RESPONSE");
-        console.log(response);
-        console.log(response.data);
         let selected = [];
         response.data.forEach(function(item) {
           const resp = {

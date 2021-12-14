@@ -140,6 +140,7 @@ export default {
       this.schedules = items;
     },
     filterCalendar(calendarid) {
+      this.selected = [];
       this.calendars.forEach(function (c){
         c.checked = c.id === calendarid;
       })
@@ -170,6 +171,8 @@ export default {
 }
 </script>
 
-<style scoped>
-
+<style>
+.vdp-datepicker__calendar .cell.selected {
+  background: #D2B4A0FF !important;
+}
 </style>

@@ -1,11 +1,11 @@
 <template>
   <div class="row">
     <div class="col-12">
-      <a href="javascript:void(0);" v-on:click="showEgutegiakHandler">Egutegiak {{ schedules.length}}</a>
+      <a href="javascript:void(0);" v-on:click="showEgutegiakHandler">Aukeratu egutegia</a>
       <ul class="list-unstyled" v-show="showEgutegiak">
         <li v-for="calendar in calendars" :key="calendar.id">
-          <input type="checkbox"  v-on:change="filterCalendar(calendar.id)" checked>
-          {{calendar.name}} ({{getSchedulesCount(calendar.id)}})
+          <input type="checkbox" :id="calendar.id" v-model="calendar.checked" v-on:change="filterCalendar(calendar.id)">
+          {{calendar.name}}
         </li>
       </ul>
     </div>
@@ -23,20 +23,8 @@
       <div class="card" style="width: 18rem;">
         <div class="card-body">
           <h5 class="card-title">{{ item.start | formatDateToHour  }} - {{ item.title }}</h5>
-<!--          <h5 class="card-title">{{ item.start | luxon('HH:mm') }} - {{ item.title }}</h5>-->
-<!--          <h5 class="card-title">{{ item.title }}</h5>-->
-
           <p class="card-text" v-html="item.body" v-links-in-new-window></p>
-<!---->
         </div>
-<!--        <div class="card-footer">-->
-<!--          <ul class="list-inline">-->
-<!--            <li class="list-inline-item">Hasi:&nbsp;&nbsp;{{ item.start | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
-<!--            <li class="list-inline-item">Hasi:&nbsp;&nbsp;{{ item.start | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
-<!--            <li class="list-inline-item">Amaitu:&nbsp;&nbsp;{{ item.end | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
-<!--            <li class="list-inline-item">Amaitu:&nbsp;&nbsp;{{ item.end | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
-<!--          </ul>-->
-<!--        </div>-->
       </div>
     </div>
 
@@ -99,24 +87,19 @@ export default {
       this.processGetSchedules(response);
     })
     this.axios.get('/api/calendars.json').then((response) => {
-      console.log(response);
-      this.calendars = response.data;
+      let arrCalendar = [];
+      response.data.map(function (c) {
+        let cloneCalendar = {};
+        for(let k in c) cloneCalendar[k]=c[k];
+        cloneCalendar.checked=false;
+        arrCalendar.push(cloneCalendar);
+      });
+      this.calendars = arrCalendar;
     })
   },
   methods: {
     showEgutegiakHandler() {
       this.showEgutegiak = !this.showEgutegiak;
-    },
-    getSchedulesCount(calendarid) {
-      let suma=0;
-      this.schedules.map(function (s) {
-        s.calendar.map (function (c){
-          if ( c.id === calendarid ) {
-            suma ++;
-          }
-        })
-      });
-      return suma;
     },
     processGetSchedules(response) {
       let dates=[]
@@ -157,13 +140,15 @@ export default {
       this.schedules = items;
     },
     filterCalendar(calendarid) {
+      this.calendars.forEach(function (c){
+        c.checked = c.id === calendarid;
+      })
       if (!this.isFirstFilter) {
         this.highlighted.dates = [];
         this.isFirstFilter = true;
       }
       const calendarIRI = "/api/calendars/" + calendarid;
       const url3 = Routing.generate('api_schedules_get_collection', {"calendar":  calendarIRI }, false);
-
       this.axios.get(url3).then((response) => {
         this.processGetSchedules(response);
       })
@@ -176,41 +161,11 @@ export default {
         const sStart = date2format(new Date(s.start));
         const sEnd = date2format(new Date(s.end));
         if ( sStart === strFetxa ) {
-          console.log(s)
           selekzioa.push(s);
         }
       });
       this.selected = selekzioa;
     }
-    // daySelectHandler(val) {
-    //   console.log("************************")
-    //   console.log(val)
-    //   const fetxa = new Date(val);
-    //   let fetxa2 = new Date(val)
-    //   fetxa2.setDate(fetxa2.getDate() + 1);
-    //   console.log(fetxa)
-    //   console.log(fetxa2)
-    //   console.log("********************************")
-    //   const strStart = date2format(fetxa);
-    //   const strEnd = date2format(fetxa2);
-    //   const url = routing.generate('api_schedules_get_collection', {
-    //     "start[after]": strStart,
-    //     "end[before]": strEnd,
-    //   });
-    //   this.axios.get(url).then((response) => {
-    //     let selected = [];
-    //     response.data.forEach(function(item) {
-    //       const resp = {
-    //         title: item.title,
-    //         start: item.start,
-    //         end: item.end,
-    //         body: item.body
-    //       }
-    //       selected.push(resp);
-    //     });
-    //     this.selected = selected;
-    //   })
-    // },
   }
 }
 </script>

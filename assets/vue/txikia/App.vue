@@ -11,9 +11,11 @@
       </datepicker>
     </div>
     <div class="col-5">
+      <p>Egutegiak {{ schedules.length}}</p>
       <ul class="list-unstyled">
         <li v-for="calendar in calendars" :key="calendar.id">
-          <input type="checkbox"  v-on:change="filterCalendar(calendar.id)">{{calendar.name}}
+          <input type="checkbox"  v-on:change="filterCalendar(calendar.id)" checked>
+          {{calendar.name}} ({{getSchedulesCount(calendar.id)}})
         </li>
       </ul>
     </div>
@@ -21,14 +23,18 @@
     <div class="col-12" v-for="(item, index) in selected">
       <div class="card" style="width: 18rem;">
         <div class="card-body">
-          <h5 class="card-title">{{ item.start | luxon('HH:mm') }} - {{ item.title }}</h5>
+          <h5 class="card-title">{{ item.start | formatDateToHour  }} - {{ item.title }}</h5>
+<!--          <h5 class="card-title">{{ item.start | luxon('HH:mm') }} - {{ item.title }}</h5>-->
+<!--          <h5 class="card-title">{{ item.title }}</h5>-->
 
           <p class="card-text" v-html="item.body" v-links-in-new-window></p>
-
+<!---->
         </div>
 <!--        <div class="card-footer">-->
 <!--          <ul class="list-inline">-->
 <!--            <li class="list-inline-item">Hasi:&nbsp;&nbsp;{{ item.start | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
+<!--            <li class="list-inline-item">Hasi:&nbsp;&nbsp;{{ item.start | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
+<!--            <li class="list-inline-item">Amaitu:&nbsp;&nbsp;{{ item.end | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
 <!--            <li class="list-inline-item">Amaitu:&nbsp;&nbsp;{{ item.end | luxon('yyyy-MM-dd HH:mm:ss') }}</li>-->
 <!--          </ul>-->
 <!--        </div>-->
@@ -90,37 +96,63 @@ export default {
   },
   mounted() {
     this.axios.get('/api/schedules.json').then((response) => {
+      this.processGetSchedules(response);
+    })
+    this.axios.get('/api/calendars.json').then((response) => {
+      console.log(response);
+      this.calendars = response.data;
+    })
+  },
+  methods: {
+    getSchedulesCount(calendarid) {
+      let suma=0;
+      this.schedules.map(function (s) {
+        s.calendar.map (function (c){
+          if ( c.id === calendarid ) {
+            suma ++;
+          }
+        })
+      });
+      return suma;
+    },
+    processGetSchedules(response) {
       let dates=[]
-      this.schedules = response.data;
+      let items=[];
       response.data.forEach(function(item) {
         const dStart = new Date(item.start);
         const strStart = date2format(dStart);
         const dEnd = new Date(item.end);
         const strEnd = date2format(dEnd);
         if (strStart === strEnd) {
-          // dates.push(new Date(item.start))
-          dates.indexOf(new Date(item.start)) === -1 ? dates.push(new Date(item.start)) : console.log("This item already exists");
+          let tempStart = {};
+          for(let k in item) tempStart[k]=item[k];
+          let fet = new Date(tempStart.start);
+          tempStart.start = fet.toUTCString();
+          dates.indexOf(item.start) === -1 ? dates.push(fet) : console.log("This item already exists");
+          // dates.indexOf(new Date(item.start)) === -1 ? items.push(item) : console.log("This item already exists");
+          dates.indexOf(item.start) === -1 ? items.push(tempStart) : console.log("This item already exists");
         } else {
           let index = -1;
           for (let hasi=new Date(item.start); hasi <= dEnd; hasi.setDate(hasi.getDate() + 1)) {
             index++;
             let dcopy = new Date(hasi);
+            let dEnd = new Date(item.end)
             let dcopy1 = new Date(item.start);
-            // dcopy.setDate(dcopy.getDate() + index + 1)
+            let temp = {};
+            for(let k in item) temp[k]=item[k];
+            temp.start = dcopy.toUTCString();
+            temp.end = dEnd.toUTCString();
             const dago = isInState(dcopy, dates);
             if ( !dago ) {
               dates.push(dcopy);
+              items.push(temp);
             }
           }
         }
       });
       this.highlighted.dates = dates;
-    })
-    this.axios.get('/api/calendars.json').then((response) => {
-      this.calendars = response.data;
-    })
-  },
-  methods: {
+      this.schedules = items;
+    },
     filterCalendar(calendarid) {
       if (!this.isFirstFilter) {
         this.highlighted.dates = [];
@@ -130,56 +162,52 @@ export default {
       const url3 = Routing.generate('api_schedules_get_collection', {"calendar":  calendarIRI }, false);
 
       this.axios.get(url3).then((response) => {
-        let dates=[]
-        this.schedules = response.data;
-        response.data.forEach(function(item) {
-          const dStart = new Date(item.start);
-          const strStart = date2format(dStart);
-          const dEnd = new Date(item.end);
-          const strEnd = date2format(dEnd);
-          if (strStart === strEnd) {
-            // dates.push(new Date(item.start))
-            dates.indexOf(new Date(item.start)) === -1 ? dates.push(new Date(item.start)) : console.log("This item already exists");
-          } else {
-            let index = -1;
-            for (let hasi=new Date(item.start); hasi <= dEnd; hasi.setDate(hasi.getDate() + 1)) {
-              index++;
-              let dcopy = new Date(hasi);
-              let dcopy1 = new Date(item.start);
-              // dcopy.setDate(dcopy.getDate() + index + 1)
-              const dago = isInState(dcopy, dates);
-              if ( !dago ) {
-                dates.push(dcopy);
-              }
-            }
-          }
-        });
-        console.log(dates)
-        this.highlighted.dates.push (...dates);
+        this.processGetSchedules(response);
       })
     },
     daySelectHandler(val) {
       const fetxa = new Date(val);
-      const strStart = date2format(fetxa);
-      const strEnd = date2format(fetxa);
-      const url = routing.generate('api_schedules_get_collection', {
-        "start[before]": strStart,
-        "end[after]": strEnd,
+      const strFetxa = date2format(fetxa);
+      let selekzioa = [];
+      this.schedules.forEach(function (s) {
+        const sStart = date2format(new Date(s.start));
+        const sEnd = date2format(new Date(s.end));
+        if ( sStart === strFetxa ) {
+          console.log(s)
+          selekzioa.push(s);
+        }
       });
-      this.axios.get(url).then((response) => {
-        let selected = [];
-        response.data.forEach(function(item) {
-          const resp = {
-            title: item.title,
-            start: item.start,
-            end: item.end,
-            body: item.body
-          }
-          selected.push(resp);
-        });
-        this.selected = selected;
-      })
-    },
+      this.selected = selekzioa;
+    }
+    // daySelectHandler(val) {
+    //   console.log("************************")
+    //   console.log(val)
+    //   const fetxa = new Date(val);
+    //   let fetxa2 = new Date(val)
+    //   fetxa2.setDate(fetxa2.getDate() + 1);
+    //   console.log(fetxa)
+    //   console.log(fetxa2)
+    //   console.log("********************************")
+    //   const strStart = date2format(fetxa);
+    //   const strEnd = date2format(fetxa2);
+    //   const url = routing.generate('api_schedules_get_collection', {
+    //     "start[after]": strStart,
+    //     "end[before]": strEnd,
+    //   });
+    //   this.axios.get(url).then((response) => {
+    //     let selected = [];
+    //     response.data.forEach(function(item) {
+    //       const resp = {
+    //         title: item.title,
+    //         start: item.start,
+    //         end: item.end,
+    //         body: item.body
+    //       }
+    //       selected.push(resp);
+    //     });
+    //     this.selected = selected;
+    //   })
+    // },
   }
 }
 </script>

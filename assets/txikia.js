@@ -48,6 +48,14 @@ Vue.use(VueLuxon, {
     }
 });
 
+import moment from 'moment'
+
+Vue.filter('formatDateToHour', function(value) {
+    if (value) {
+        return moment(String(value)).format('hh:mm')
+    }
+});
+
 new Vue({
     el: '#app',
     render(h) {

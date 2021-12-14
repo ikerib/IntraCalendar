@@ -1,6 +1,15 @@
 <template>
   <div class="row">
-    <div class="col-6">
+    <div class="col-12">
+      <a href="javascript:void(0);" v-on:click="showEgutegiakHandler">Egutegiak {{ schedules.length}}</a>
+      <ul class="list-unstyled" v-show="showEgutegiak">
+        <li v-for="calendar in calendars" :key="calendar.id">
+          <input type="checkbox"  v-on:change="filterCalendar(calendar.id)" checked>
+          {{calendar.name}} ({{getSchedulesCount(calendar.id)}})
+        </li>
+      </ul>
+    </div>
+    <div class="col-12">
       <datepicker
           :language="eu"
           :inline="true"
@@ -10,16 +19,6 @@
           v-model="selectedDate"
       </datepicker>
     </div>
-    <div class="col-5">
-      <p>Egutegiak {{ schedules.length}}</p>
-      <ul class="list-unstyled">
-        <li v-for="calendar in calendars" :key="calendar.id">
-          <input type="checkbox"  v-on:change="filterCalendar(calendar.id)" checked>
-          {{calendar.name}} ({{getSchedulesCount(calendar.id)}})
-        </li>
-      </ul>
-    </div>
-
     <div class="col-12" v-for="(item, index) in selected">
       <div class="card" style="width: 18rem;">
         <div class="card-body">
@@ -78,6 +77,7 @@ export default {
       en: en,
       es: es,
       eu: eu,
+      showEgutegiak: false,
       isFirstFilter: false,
       calendars: [],
       selected: [],
@@ -104,6 +104,9 @@ export default {
     })
   },
   methods: {
+    showEgutegiakHandler() {
+      this.showEgutegiak = !this.showEgutegiak;
+    },
     getSchedulesCount(calendarid) {
       let suma=0;
       this.schedules.map(function (s) {

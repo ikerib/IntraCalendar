@@ -1,36 +1,41 @@
 <template>
-  <div class="row">
-    <div class="col-2">&nbsp;</div>
-    <div class="col-10">
-      <a href="javascript:void(0);" v-on:click="showEgutegiakHandler">Aukeratu egutegia</a>
-      <ul class="list-unstyled" v-show="showEgutegiak">
-        <li v-for="calendar in calendars" :key="calendar.id">
-          <input type="checkbox" :id="calendar.id" v-model="calendar.checked" v-on:change="filterCalendar(calendar.id)">
-          {{calendar.name}}
-        </li>
-      </ul>
+  <div class="content">
+    <div class="row">
+      <div class="col-1">&nbsp;</div>
+      <div class="col-11">
+        <a href="javascript:void(0);" v-on:click="showEgutegiakHandler">Aukeratu egutegia</a>
+        <ul class="list-unstyled" v-show="showEgutegiak">
+          <li v-for="calendar in calendars" :key="calendar.id">
+            <input type="checkbox" :id="calendar.id" v-model="calendar.checked" v-on:change="filterCalendar(calendar.id)">
+            {{calendar.name}}
+          </li>
+        </ul>
+      </div>
     </div>
-    <div class="col-2">&nbsp;</div>
-    <div class="col-10">
-      <datepicker
-          :language="eu"
-          :inline="true"
-          :highlighted="highlighted"
-          :monday-first=true
-          @selected="daySelectHandler">
-          v-model="selectedDate"
-      </datepicker>
+    <div class="row">
+      <div class="col-1">&nbsp;</div>
+      <div class="col-11">
+        <datepicker
+            :language="eu"
+            :inline="true"
+            :highlighted="highlighted"
+            :monday-first=true
+            @selected="daySelectHandler">
+            v-model="selectedDate"
+        </datepicker>
+      </div>
     </div>
-    <div class="col-2">&nbsp;</div>
-    <div class="col-10" v-for="(item, index) in selected">
-      <div class="card" style="width: 18rem;">
-        <div class="card-body">
-          <h5 class="card-title">{{ item.start | formatDateToHour  }} - {{ item.title }}</h5>
-          <p class="card-text" v-html="item.body" v-links-in-new-window></p>
+    <div class="row" v-for="(item, index) in selected">
+      <div class="col-1">&nbsp;</div>
+      <div class="col-11">
+        <div class="card" style="width: 18rem;">
+          <div class="card-body">
+            <h5 class="card-title">{{ item.start | formatDateToHour  }} - {{ item.title }}</h5>
+            <p class="card-text" v-html="item.body" v-links-in-new-window></p>
+          </div>
         </div>
       </div>
     </div>
-
   </div>
 </template>
 

@@ -1,6 +1,7 @@
 <template>
   <div class="row">
-    <div class="col-12">
+    <div class="col-2">&nbsp;</div>
+    <div class="col-10">
       <a href="javascript:void(0);" v-on:click="showEgutegiakHandler">Aukeratu egutegia</a>
       <ul class="list-unstyled" v-show="showEgutegiak">
         <li v-for="calendar in calendars" :key="calendar.id">
@@ -9,7 +10,8 @@
         </li>
       </ul>
     </div>
-    <div class="col-12">
+    <div class="col-2">&nbsp;</div>
+    <div class="col-10">
       <datepicker
           :language="eu"
           :inline="true"
@@ -19,7 +21,8 @@
           v-model="selectedDate"
       </datepicker>
     </div>
-    <div class="col-12" v-for="(item, index) in selected">
+    <div class="col-2">&nbsp;</div>
+    <div class="col-10" v-for="(item, index) in selected">
       <div class="card" style="width: 18rem;">
         <div class="card-body">
           <h5 class="card-title">{{ item.start | formatDateToHour  }} - {{ item.title }}</h5>

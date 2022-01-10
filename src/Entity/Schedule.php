@@ -39,6 +39,7 @@ class Schedule
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"calendar:read"})
      */
     private $id;
 
